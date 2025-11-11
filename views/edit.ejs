@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Product - Supermarket Management System</title>
+</head>
+<body>
+    <div>
+        <h1>Edit Product</h1>
+        <a href="/">Home</a> | 
+        <a href="/details?_id=<%= product._id %>">Back to Details</a>
+        <hr>
+
+        <h2>Edit Product: <%= product.productName %></h2>
+        
+        <% if (product.productImage) { %>
+            <div>
+                <p>Current Image:</p>
+                <img src="data:image/jpg;base64, <%= product.productImage %>" alt="Current Product Image" width="200">
+            </div>
+        <% } %>
+
+        <form action="/update" method="POST" enctype="multipart/form-data">
+            <div>
+                <label>Product ID:</label>
+                <input type="text" name="productId" value="<%= product.productId %>" required>
+            </div>
+
+            <div>
+                <label>Product Name:</label>
+                <input type="text" name="productName" value="<%= product.productName %>" required>
+            </div>
+
+            <div>
+                <label>Category:</label>
+                <select name="category" required>
+                    <option value="Food" <%= product.category === 'Food' ? 'selected' : '' %>>Food</option>
+                    <option value="Beverages" <%= product.category === 'Beverages' ? 'selected' : '' %>>Beverages</option>
+                    <option value="Daily Necessities" <%= product.category === 'Daily Necessities' ? 'selected' : '' %>>Daily Necessities</option>
+                    <option value="Cleaning Supplies" <%= product.category === 'Cleaning Supplies' ? 'selected' : '' %>>Cleaning Supplies</option>
+                    <option value="Stationery" <%= product.category === 'Stationery' ? 'selected' : '' %>>Stationery</option>
+                    <option value="Other" <%= product.category === 'Other' ? 'selected' : '' %>>Other</option>
+                </select>
+            </div>
+
+            <div>
+                <label>Price:</label>
+                <input type="number" name="price" step="0.01" min="0" value="<%= product.price %>" required>
+            </div>
+
+            <div>
+                <label>Stock Quantity:</label>
+                <input type="number" name="stock" min="0" value="<%= product.stock %>" required>
+            </div>
+
+            <div>
+                <label>Description:</label>
+                <textarea name="description" rows="4"><%= product.description || '' %></textarea>
+            </div>
+
+            <div>
+                <label>Update Product Image:</label>
+                <input type="file" name="productImage" accept="image/*">
+                <div>Leave empty if you don't want to update the image</div>
+            </div>
+
+            <input type="hidden" name="_id" value="<%= product._id %>">
+            
+            <button type="submit">Update Product</button>
+            <a href="/details?_id=<%= product._id %>">Cancel</a>
+        </form>
+    </div>
+</body>
+</html>

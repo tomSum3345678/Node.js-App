@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Product Details - Supermarket Management System</title>
+</head>
+<body>
+    <div>
+        <h1>Product Details</h1>
+        <a href="/">Home</a> | 
+        <a href="/find">Back to List</a> | 
+        <a href="/edit?_id=<%= product._id %>">Edit</a>
+        <hr>
+
+        <div>
+            <div>
+                <% if (product.productImage) { %>
+                    <img src="data:image/jpg;base64, <%= product.productImage %>" alt="<%= product.productName %>" width="300">
+                <% } else { %>
+                    <div>No Product Image</div>
+                <% } %>
+            </div>
+
+            <div>
+                <div>
+                    <span>Product ID:</span>
+                    <span><%= product.productId %></span>
+                </div>
+
+                <div>
+                    <span>Product Name:</span>
+                    <span><%= product.productName %></span>
+                </div>
+
+                <div>
+                    <span>Category:</span>
+                    <span><%= product.category %></span>
+                </div>
+
+                <div>
+                    <span>Price:</span>
+                    <span>$<%= product.price %></span>
+                </div>
+
+                <div>
+                    <span>Stock Quantity:</span>
+                    <span><%= product.stock %></span>
+                </div>
+
+                <div>
+                    <span>Description:</span>
+                    <p><%= product.description || 'No description available' %></p>
+                </div>
+
+                <div>
+                    <a href="/edit?_id=<%= product._id %>">Edit Product</a>
+                    <a href="/delete?_id=<%= product._id %>" onclick="return confirm('Are you sure you want to delete this product?')">Delete Product</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

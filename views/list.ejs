@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Product List - Supermarket Management System</title>
+</head>
+<body>
+    <div>
+        <h1>Supermarket Product Management System</h1>
+        <a href="/create">Create New Product</a> | 
+        <a href="/find">View All Products</a>
+
+        <div>
+            <h3>Search Products</h3>
+            <form action="/find" method="GET">
+                <div>
+                    <label>Product Name:</label>
+                    <input type="text" name="productName" value="<%= typeof productName !== 'undefined' ? productName : '' %>">
+                </div>
+
+                <div>
+                    <label>Category:</label>
+                    <select name="category">
+                        <option value="">All Categories</option>
+                        <option value="Food" <%= (typeof category !== 'undefined' && category === 'Food') ? 'selected' : '' %>>Food</option>
+                        <option value="Beverages" <%= (typeof category !== 'undefined' && category === 'Beverages') ? 'selected' : '' %>>Beverages</option>
+                        <option value="Daily Necessities" <%= (typeof category !== 'undefined' && category === 'Daily Necessities') ? 'selected' : '' %>>Daily Necessities</option>
+                        <option value="Cleaning Supplies" <%= (typeof category !== 'undefined' && category === 'Cleaning Supplies') ? 'selected' : '' %>>Cleaning Supplies</option>
+                        <option value="Stationery" <%= (typeof category !== 'undefined' && category === 'Stationery') ? 'selected' : '' %>>Stationery</option>
+                        <option value="Other" <%= (typeof category !== 'undefined' && category === 'Other') ? 'selected' : '' %>>Other</option>
+                    </select>
+                </div>
+
+                <button type="submit">Search</button>
+                <a href="/find">Clear</a>
+            </form>
+        </div>
+
+        <h2>Product List (<%= nProducts %>)</h2>
+        
+        <% if (nProducts === 0) { %>
+            <p>No products found matching your criteria.</p>
+        <% } else { %>
+            <div>
+                <% for (var product of products) { %>
+                <div>
+                    <% if (product.productImage) { %>
+                        <img src="data:image/jpg;base64, <%= product.productImage %>" alt="<%= product.productName %>" width="150">
+                    <% } else { %>
+                        <div>No Image</div>
+                    <% } %>
+                    
+                    <div>
+                        <a href="/details?_id=<%= product._id %>"><%= product.productName %></a>
+                    </div>
+                    <div>ID: <%= product.productId %></div>
+                    <div>Category: <%= product.category %></div>
+                    <div>Price: $<%= product.price %></div>
+                    <div>Stock: <%= product.stock %></div>
+                    
+                    <div>
+                        <a href="/edit?_id=<%= product._id %>">Edit</a>
+                        <a href="/delete?_id=<%= product._id %>" onclick="return confirm('Are you sure you want to delete this product?')">Delete</a>
+                    </div>
+                    <hr>
+                </div>
+                <% } %>
+            </div>
+        <% } %>
+    </div>
+</body>
+</html>
