@@ -123,7 +123,7 @@ app.put('/api/products/:id', async (req, res) => {
     }
 });
 
-app.delete('/api/products/delete/:id', async (req, res) => {
+app.delete('/api/products/delete/:productId', async (req, res) => {
     try {
         await client.connect();
         const db = client.db(dbName);
@@ -287,4 +287,5 @@ app.use((req, res) => {
 app.listen(process.env.PORT || 8099, () => {
     console.log(`Server is running on port ${process.env.PORT || 8099}`);
 });
+
 
