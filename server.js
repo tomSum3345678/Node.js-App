@@ -123,14 +123,11 @@ app.put('/api/products/:id', async (req, res) => {
     }
 });
 
-app.delete('/api/products/:id', async (req, res) => {
+app.delete('/api/products/delete/:id', async (req, res) => {
     try {
         await client.connect();
         const db = client.db(dbName);
-        let DOCID = {};
-        DOCID['_id'] = new ObjectId(req.params.id);
-        
-        const result = await deleteDocument(db, DOCID);
+        const result = await db.collection('products').deleteOne({ productId: req.params.productId });
         res.status(200).json({message: `Deleted ${result.deletedCount} product(s)`});
     } catch (error) {
         res.status(500).json({error: error.message});
@@ -290,3 +287,4 @@ app.use((req, res) => {
 app.listen(process.env.PORT || 8099, () => {
     console.log(`Server is running on port ${process.env.PORT || 8099}`);
 });
+
