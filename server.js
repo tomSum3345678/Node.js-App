@@ -26,7 +26,7 @@ const authController = require('./controllers/authController');
 mongodb ^6.9: https://www.npmjs.com/package/mongodb
 */
 const { MongoClient, ObjectId } = require("mongodb");
-const mongourl = ''; // your url
+const mongourl = 'mongodb+srv://test1:test1@cluster0.sdtvkpd.mongodb.net/?appName=Cluster0';
 const client = new MongoClient(mongourl); 
 const dbName = 'supermarket_db';
 const collectionName = "products";
