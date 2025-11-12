@@ -7,17 +7,26 @@ express-formiddable: https://www.npmjs.com/package/express-formidable
 fs/promises: https://nodejs.org/zh-tw/learn/manipulating-files/reading-files-with-nodejs
 -----------------------------
 */
+// ===== .env =====
+require('dotenv').config();
 const express = require('express');
 const app = express();
 const fs = require('node:fs/promises');
 const formidable = require('express-formidable'); 
-app.use(formidable());
-
+const session = require('express-session');
+const passport = require('passport');
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
+const LocalStrategy = require('passport-local').Strategy;
+const mongoose = require('mongoose');
+const path = require('path');
+// ===== Models =====
+const User = require('./models/User');
+const authController = require('./controllers/authController');
 /* Model - mongodb modules
 mongodb ^6.9: https://www.npmjs.com/package/mongodb
 */
 const { MongoClient, ObjectId } = require("mongodb");
-const mongourl = ''; //  MongoDB connection URL.
+const mongourl = ''; // your url
 const client = new MongoClient(mongourl); 
 const dbName = 'supermarket_db';
 const collectionName = "products";
