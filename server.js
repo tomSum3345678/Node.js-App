@@ -165,18 +165,20 @@ passport.deserializeUser(async function (id, done) {
 
 
 // ===== Middleware Setup =====
+app.set('trust proxy', 1);
 // 1. Session configuration
 app.use(session({
   secret: process.env.SESSION_SECRET,
-  resave: true,
-  saveUninitialized: true,
+  resave: false,  
+  saveUninitialized: false,  
   cookie: {
     maxAge: 24 * 60 * 60 * 1000, // 24 hours
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production', // HTTPS only in production
-    sameSite: 'lax'
+    secure: true,  
+    sameSite: 'none'  
   }
 }));
+
 
 // 2. Initialize passport and session for persistent login sessions
 app.use(passport.initialize());
