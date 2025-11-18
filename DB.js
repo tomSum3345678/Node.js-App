@@ -743,7 +743,7 @@ db.permissions.insertMany([
 // Users indexes
 db.users.createIndex({ userId: 1 }, { unique: true })
 db.users.createIndex({ email: 1 }, { unique: true })
-db.users.createIndex({ username: 1 }, { unique: true })
+db.users.createIndex({ username: 1 })
 db.users.createIndex({ role: 1 })
 
 // Products indexes
@@ -782,4 +782,4 @@ db.suppliers.createIndex({ status: 1 })
 
 // Permissions indexes
 db.permissions.createIndex({ permissionId: 1 }, { unique: true })
-db.permissions.createIndex({ role: 1 }, { unique: true })
+db.permissions.createIndex({ role: 1 } )
