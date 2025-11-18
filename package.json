@@ -4,14 +4,20 @@
     "author": "Group 11",
     "version": "0.0.1",
     "dependencies": {
+        "bcryptjs": "*",
+        "connect-mongo": "*",
+        "dotenv": "*",
         "ejs": "*",
         "express": "*",
         "express-formidable": "*",
-        "mongodb": "6.9.0",
+        "express-session": "*",
+        "mongodb": "*",
+        "mongoose": "*",
         "nodemon": "*",
         "passport": "*",
         "passport-facebook": "*",
-        "express-session": "*"
+        "passport-google-oauth20": "*",
+        "passport-local": "*"
     },
     "engine": "node >= 18.0.0",
     "scripts": {
