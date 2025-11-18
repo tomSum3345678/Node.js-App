@@ -12,7 +12,7 @@ require('dotenv').config();
 const express = require('express');
 const app = express();
 const fs = require('node:fs/promises');
-const formidable = require('express-formidable'); 
+const formidable = require('express-formidable');
 const session = require('express-session');
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
@@ -27,7 +27,7 @@ mongodb ^6.9: https://www.npmjs.com/package/mongodb
 */
 const { MongoClient, ObjectId } = require("mongodb");
 const mongourl = 'mongodb+srv://test1:test1@cluster0.sdtvkpd.mongodb.net/?appName=Cluster0';
-const client = new MongoClient(mongourl); 
+const client = new MongoClient(mongourl);
 const dbName = 'supermarket_db';
 const collectionName = "products";
 
@@ -37,17 +37,17 @@ mongoose.connect(process.env.MONGODB_URI)
   .catch(err => console.error(' Mongoose connection error:', err));
 
 // ===== Google OAuth 2.0 Configuration =====
-const googleAuth = {
+/*const googleAuth = {
   clientID: process.env.GOOGLE_CLIENT_ID,
   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
   callbackURL: process.env.GOOGLE_CALLBACK_URL
-};
+};*/
 
 // ===== Passport Google OAuth 2.0 Strategy =====
 passport.use(new GoogleStrategy({
-  clientID: googleAuth.clientID,
-  clientSecret: googleAuth.clientSecret,
-  callbackURL: googleAuth.callbackURL,
+  clientID: process.env.GOOGLE_CLIENT_ID,
+  clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+  callbackURL: process.env.GOOGLE_CALLBACK_URL,
   proxy: true
 },
   async (accessToken, refreshToken, profile, done) => {
@@ -107,34 +107,34 @@ passport.use(new GoogleStrategy({
   }
 ));
 passport.use(new LocalStrategy({
-    usernameField: 'email',    // 使用 email 作為用戶名
-    passwordField: 'password',
-    passReqToCallback: true  // 使用 password 作為密碼
-  },
-  async function(req, email, password, done) {
+  usernameField: 'email',    // 使用 email 作為用戶名
+  passwordField: 'password',
+  passReqToCallback: true  // 使用 password 作為密碼
+},
+  async function (req, email, password, done) {
     try {
       // 查找用戶
       const user = await User.findOne({ email: email });
-      
+
       // 如果用戶不存在
       if (!user) {
         return done(null, false, { message: '找不到該電子郵件地址' });
       }
-      
+
       // 如果用戶是通過 Google 註冊的
       if (user.provider === 'google') {
         return done(null, false, { message: '此帳戶使用 Google 登入，請點擊 "使用 Google 登入" 按鈕' });
       }
-      
+
       // 驗證密碼 (因為是明文密碼)
       if (user.password !== password) {
         return done(null, false, { message: '密碼不正確' });
       }
-      
+
       // 更新最後登入時間
       user.lastLogin = new Date();
       await user.save();
-      
+
       // 登入成功
       return done(null, user);
     } catch (err) {
@@ -152,14 +152,16 @@ passport.serializeUser(function (user, done) {
 // Function deserializeUser is used to retrieve user data from session
 passport.deserializeUser(async function (id, done) {
   try {
+    console.log('Deserialize User ID:', id);
     const user = await User.findById(id);
-    console.log('Render Log - Deserialized User:', user);
+    console.log('Deserialized User:', user);
     done(null, user);
   } catch (error) {
-    console.error('Render Log - Deserialize Error:', error);
+    console.error('Error in deserializing user:', error);
     done(error, null);
   }
 });
+
 
 
 // ===== Middleware Setup =====
@@ -171,7 +173,8 @@ app.use(session({
   cookie: {
     maxAge: 24 * 60 * 60 * 1000, // 24 hours
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production' // HTTPS only in production
+    secure: process.env.NODE_ENV === 'production', // HTTPS only in production
+    sameSite: 'lax'
   }
 }));
 
@@ -223,37 +226,37 @@ function checkRole(allowedRoles) {
 
 
 const insertDocument = async (db, doc) => {
-    var collection = db.collection(collectionName);
-    let results = await collection.insertOne(doc);
-    console.log("insert one document:" + JSON.stringify(results));
-    return results;
+  var collection = db.collection(collectionName);
+  let results = await collection.insertOne(doc);
+  console.log("insert one document:" + JSON.stringify(results));
+  return results;
 }
 
 const findDocument = async (db, criteria) => {
-    let findResults = [];
-    let collection = db.collection(collectionName);
-    console.log(`findCriteria: ${JSON.stringify(criteria)}`);
-    findResults = await collection.find(criteria).toArray();
-    console.log(`findDocument: ${findResults.length}`);
-    console.log(`findResults: ${JSON.stringify(findResults)}`);
-    return findResults;
+  let findResults = [];
+  let collection = db.collection(collectionName);
+  console.log(`findCriteria: ${JSON.stringify(criteria)}`);
+  findResults = await collection.find(criteria).toArray();
+  console.log(`findDocument: ${findResults.length}`);
+  console.log(`findResults: ${JSON.stringify(findResults)}`);
+  return findResults;
 };
 
 const updateDocument = async (db, criteria, updateDoc) => {
-    let updateResults = [];
-    let collection = db.collection(collectionName);
-    console.log(`updateCriteria: ${JSON.stringify(criteria)}`);
-    updateResults = await collection.updateOne(criteria,{$set : updateDoc});
-    console.log(`updateResults: ${JSON.stringify(updateResults)}`);
-    return updateResults;
+  let updateResults = [];
+  let collection = db.collection(collectionName);
+  console.log(`updateCriteria: ${JSON.stringify(criteria)}`);
+  updateResults = await collection.updateOne(criteria, { $set: updateDoc });
+  console.log(`updateResults: ${JSON.stringify(updateResults)}`);
+  return updateResults;
 }
 
 const deleteDocument = async (db, criteria) => {
-    let collection = db.collection(collectionName);
-    console.log(`deleteCriteria: ${JSON.stringify(criteria)}`);
-    let deleteResults = await collection.deleteOne(criteria);
-    console.log(`deleteResults: ${JSON.stringify(deleteResults)}`);
-    return deleteResults;
+  let collection = db.collection(collectionName);
+  console.log(`deleteCriteria: ${JSON.stringify(criteria)}`);
+  let deleteResults = await collection.deleteOne(criteria);
+  console.log(`deleteResults: ${JSON.stringify(deleteResults)}`);
+  return deleteResults;
 }
 
 /* //testing user check
@@ -288,7 +291,7 @@ async function syncUsersFromMongoDB() {
 app.get("/login", authController.showLoginPage);
 app.post("/login", authController.processLogin);
 app.get('/auth/google', passport.authenticate('google', { scope: ['email', 'profile'] }));
-app.get('/auth/google/callback', 
+app.get('/auth/google/callback',
   passport.authenticate('google', { failureRedirect: '/login', failureMessage: true }),
   authController.googleCallback);
 app.get("/logout", authController.logout);
@@ -296,188 +299,188 @@ app.get('/auth/status', authController.checkAuthStatus);
 
 // RESTful APIs
 app.get('/api/products', async (req, res) => { // search products
-    try {
-        await client.connect();
-        const db = client.db(dbName);
-        const docs = await findDocument(db, req.query);
-        res.status(200).json(docs);
-    } catch (error) {
-        res.status(500).json({error: error.message});
-    }
+  try {
+    await client.connect();
+    const db = client.db(dbName);
+    const docs = await findDocument(db, req.query);
+    res.status(200).json(docs);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
 app.post('/api/products', async (req, res) => {
-    try {
-        await client.connect();
-        const db = client.db(dbName);
-        let newDoc = {
-            productId: req.fields.productId,
-            productName: req.fields.productName,
-            category: req.fields.category,
-            price: parseFloat(req.fields.price),
-            stock: parseInt(req.fields.stock),
-            description: req.fields.description
-        };
+  try {
+    await client.connect();
+    const db = client.db(dbName);
+    let newDoc = {
+      productId: req.fields.productId,
+      productName: req.fields.productName,
+      category: req.fields.category,
+      price: parseFloat(req.fields.price),
+      stock: parseInt(req.fields.stock),
+      description: req.fields.description
+    };
 
-        if (req.files.productImage && req.files.productImage.size > 0) {
-            const data = await fs.readFile(req.files.productImage.path);
-            newDoc.productImage = Buffer.from(data).toString('base64');
-        }
-        
-        const result = await insertDocument(db, newDoc);
-        res.status(201).json({message: 'Product created', id: result.insertedId});
-    } catch (error) {
-        res.status(500).json({error: error.message});
+    if (req.files.productImage && req.files.productImage.size > 0) {
+      const data = await fs.readFile(req.files.productImage.path);
+      newDoc.productImage = Buffer.from(data).toString('base64');
     }
+
+    const result = await insertDocument(db, newDoc);
+    res.status(201).json({ message: 'Product created', id: result.insertedId });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
 app.put('/api/products/update/:productId', async (req, res) => {
-    try {
-        await client.connect();
-        const db = client.db(dbName);
-        const criteria = { productId: req.params.productId };
-        
-        let updateDoc = {
-            productName: req.fields.productName,
-            category: req.fields.category,
-            price: parseFloat(req.fields.price),
-            stock: parseInt(req.fields.stock),
-            description: req.fields.description
-        };
+  try {
+    await client.connect();
+    const db = client.db(dbName);
+    const criteria = { productId: req.params.productId };
 
-        if (req.files.productImage && req.files.productImage.size > 0) {
-            const data = await fs.readFile(req.files.productImage.path);
-            updateDoc.productImage = Buffer.from(data).toString('base64');
-        }
-        
-        const result = await updateDocument(db, criteria, updateDoc);
-        res.status(200).json({message: `Updated ${result.modifiedCount} product(s)`});
-    } catch (error) {
-        res.status(500).json({error: error.message});
+    let updateDoc = {
+      productName: req.fields.productName,
+      category: req.fields.category,
+      price: parseFloat(req.fields.price),
+      stock: parseInt(req.fields.stock),
+      description: req.fields.description
+    };
+
+    if (req.files.productImage && req.files.productImage.size > 0) {
+      const data = await fs.readFile(req.files.productImage.path);
+      updateDoc.productImage = Buffer.from(data).toString('base64');
     }
+
+    const result = await updateDocument(db, criteria, updateDoc);
+    res.status(200).json({ message: `Updated ${result.modifiedCount} product(s)` });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
 app.delete('/api/products/delete/:productId', async (req, res) => {
-    try {
-        await client.connect();
-        const db = client.db(dbName);
-        const criteria = { productId: req.params.productId };
-        const result = await deleteDocument(db, criteria);
-        res.status(200).json({message: `Deleted ${result.deletedCount} product(s)`});
-    } catch (error) {
-        res.status(500).json({error: error.message});
-    }
+  try {
+    await client.connect();
+    const db = client.db(dbName);
+    const criteria = { productId: req.params.productId };
+    const result = await deleteDocument(db, criteria);
+    res.status(200).json({ message: `Deleted ${result.deletedCount} product(s)` });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
 
 // Web UI Handlers
 const handle_Create = async (req, res) => {
-    try {
-        await client.connect();
-        console.log("Connected successfully to server");
-        const db = client.db(dbName);
-        let newDoc = {
-            productId: req.fields.productId,
-            productName: req.fields.productName,
-            category: req.fields.category,
-            price: parseFloat(req.fields.price),
-            stock: parseInt(req.fields.stock),
-            description: req.fields.description
-        };
+  try {
+    await client.connect();
+    console.log("Connected successfully to server");
+    const db = client.db(dbName);
+    let newDoc = {
+      productId: req.fields.productId,
+      productName: req.fields.productName,
+      category: req.fields.category,
+      price: parseFloat(req.fields.price),
+      stock: parseInt(req.fields.stock),
+      description: req.fields.description
+    };
 
-        if (req.files.productImage && req.files.productImage.size > 0) {
-            const data = await fs.readFile(req.files.productImage.path);
-            newDoc.productImage = Buffer.from(data).toString('base64');
-        }
-        
-        await insertDocument(db, newDoc);
-        res.redirect('/');
-    } catch (error) {
-        res.status(500).render('info', {message: `Error: ${error.message}`});
+    if (req.files.productImage && req.files.productImage.size > 0) {
+      const data = await fs.readFile(req.files.productImage.path);
+      newDoc.productImage = Buffer.from(data).toString('base64');
     }
+
+    await insertDocument(db, newDoc);
+    res.redirect('/');
+  } catch (error) {
+    res.status(500).render('info', { message: `Error: ${error.message}` });
+  }
 }
 
 const handle_Find = async (res, criteria = {}) => {
-    try {
-        await client.connect();
-        console.log("Connected successfully to server");
-        const db = client.db(dbName);
-        const docs = await findDocument(db, criteria);
-        res.status(200).render('list',{nProducts: docs.length, products: docs});
-    } catch (error) {
-        res.status(500).render('info', {message: `Error: ${error.message}`});
-    }
+  try {
+    await client.connect();
+    console.log("Connected successfully to server");
+    const db = client.db(dbName);
+    const docs = await findDocument(db, criteria);
+    res.status(200).render('list', { nProducts: docs.length, products: docs });
+  } catch (error) {
+    res.status(500).render('info', { message: `Error: ${error.message}` });
+  }
 }
 
 const handle_Details = async (res, criteria) => {
-    try {
-        await client.connect();
-        console.log("Connected successfully to server");
-        const db = client.db(dbName);
-        let DOCID = {};
-        DOCID['_id'] = new ObjectId(criteria._id);
-        const docs = await findDocument(db, DOCID); 
-        res.status(200).render('details', {product: docs[0]});
-    } catch (error) {
-        res.status(500).render('info', {message: `Error: ${error.message}`});
-    }
+  try {
+    await client.connect();
+    console.log("Connected successfully to server");
+    const db = client.db(dbName);
+    let DOCID = {};
+    DOCID['_id'] = new ObjectId(criteria._id);
+    const docs = await findDocument(db, DOCID);
+    res.status(200).render('details', { product: docs[0] });
+  } catch (error) {
+    res.status(500).render('info', { message: `Error: ${error.message}` });
+  }
 }
 
 const handle_Edit = async (res, criteria) => {
-    try {
-        await client.connect();
-        console.log("Connected successfully to server");
-        const db = client.db(dbName);
-        let DOCID = {};
-        DOCID['_id'] = new ObjectId(criteria._id);
-        const docs = await findDocument(db, DOCID); 
-        res.status(200).render('edit',{product: docs[0]});
-    } catch (error) {
-        res.status(500).render('info', {message: `Error: ${error.message}`});
-    }
+  try {
+    await client.connect();
+    console.log("Connected successfully to server");
+    const db = client.db(dbName);
+    let DOCID = {};
+    DOCID['_id'] = new ObjectId(criteria._id);
+    const docs = await findDocument(db, DOCID);
+    res.status(200).render('edit', { product: docs[0] });
+  } catch (error) {
+    res.status(500).render('info', { message: `Error: ${error.message}` });
+  }
 }
 
 const handle_Update = async (req, res) => {
-    try {
-        await client.connect();
-        console.log("Connected successfully to server");
-        const db = client.db(dbName);
-        let DOCID = {};
-        DOCID['_id'] = new ObjectId(req.fields._id);
-        
-        let updateDoc = {
-            productName: req.fields.productName,
-            category: req.fields.category,
-            price: parseFloat(req.fields.price),
-            stock: parseInt(req.fields.stock),
-            description: req.fields.description
-        };
+  try {
+    await client.connect();
+    console.log("Connected successfully to server");
+    const db = client.db(dbName);
+    let DOCID = {};
+    DOCID['_id'] = new ObjectId(req.fields._id);
 
-        if (req.files.productImage && req.files.productImage.size > 0) {
-            const data = await fs.readFile(req.files.productImage.path);
-            updateDoc.productImage = Buffer.from(data).toString('base64');
-        }
-        
-        const results = await updateDocument(db, DOCID, updateDoc);
-        res.status(200).render('info', {message: `Updated ${results.modifiedCount} product(s)`});
-    } catch (error) {
-        res.status(500).render('info', {message: `Error: ${error.message}`});
+    let updateDoc = {
+      productName: req.fields.productName,
+      category: req.fields.category,
+      price: parseFloat(req.fields.price),
+      stock: parseInt(req.fields.stock),
+      description: req.fields.description
+    };
+
+    if (req.files.productImage && req.files.productImage.size > 0) {
+      const data = await fs.readFile(req.files.productImage.path);
+      updateDoc.productImage = Buffer.from(data).toString('base64');
     }
+
+    const results = await updateDocument(db, DOCID, updateDoc);
+    res.status(200).render('info', { message: `Updated ${results.modifiedCount} product(s)` });
+  } catch (error) {
+    res.status(500).render('info', { message: `Error: ${error.message}` });
+  }
 }
 
 const handle_Delete = async (req, res) => {
-    try {
-        await client.connect();
-        console.log("Connected successfully to server");
-        const db = client.db(dbName);
-        let DOCID = {};
-        DOCID['_id'] = new ObjectId(req.query._id);
-        
-        const results = await deleteDocument(db, DOCID);
-        res.status(200).render('info', {message: `Deleted ${results.deletedCount} product(s)`});
-    } catch (error) {
-        res.status(500).render('info', {message: `Error: ${error.message}`});
-    }
+  try {
+    await client.connect();
+    console.log("Connected successfully to server");
+    const db = client.db(dbName);
+    let DOCID = {};
+    DOCID['_id'] = new ObjectId(req.query._id);
+
+    const results = await deleteDocument(db, DOCID);
+    res.status(200).render('info', { message: `Deleted ${results.deletedCount} product(s)` });
+  } catch (error) {
+    res.status(500).render('info', { message: `Error: ${error.message}` });
+  }
 }
 
 // ===== Web UI Routes =====
@@ -505,6 +508,9 @@ app.get('/', isLoggedIn, (req, res) => {
 app.get('/content', async (req, res) => {
   console.log('Render Log - User:', req.user);
   console.log('Render Log - Authenticated:', req.isAuthenticated());
+  console.log('Session:', req.session); 
+  console.log('User:', req.user); 
+  console.log('Authenticated:', req.isAuthenticated()); 
   try {
     await client.connect();
     console.log("Connected successfully to server");
@@ -521,7 +527,7 @@ app.get('/content', async (req, res) => {
     const docs = await findDocument(db, criteria);
 
     res.status(200).render('content', {
-      nProducts: docs.length|| 0,
+      nProducts: docs.length || 0,
       products: docs || [],
       user: req.user || null,
       isAuthenticated: req.isAuthenticated()
@@ -533,35 +539,35 @@ app.get('/content', async (req, res) => {
   }
 });
 
-app.get('/create', checkRole(['staff', 'manager', 'storage']), isLoggedIn,(req,res) => {
-    res.status(200).render('create',{user: 'admin'});
+app.get('/create', checkRole(['staff', 'manager', 'storage']), isLoggedIn, (req, res) => {
+  res.status(200).render('create', { user: 'admin' });
 })
 
-app.post('/create', checkRole(['staff', 'manager', 'storage']), isLoggedIn,(req, res) => {
-    handle_Create(req, res);
+app.post('/create', checkRole(['staff', 'manager', 'storage']), isLoggedIn, (req, res) => {
+  handle_Create(req, res);
 })
 
-app.get('/find', checkRole(['staff', 'manager', 'storage']), isLoggedIn,(req,res) => {
-    let criteria = {};
-    if (req.query.category) criteria.category = req.query.category;
-    if (req.query.productName) criteria.productName = { $regex: req.query.productName, $options: 'i' };
-    handle_Find(res, criteria);
+app.get('/find', checkRole(['staff', 'manager', 'storage']), isLoggedIn, (req, res) => {
+  let criteria = {};
+  if (req.query.category) criteria.category = req.query.category;
+  if (req.query.productName) criteria.productName = { $regex: req.query.productName, $options: 'i' };
+  handle_Find(res, criteria);
 })
 
-app.get('/details', (req,res) => {
-    handle_Details(res, req.query);
+app.get('/details', (req, res) => {
+  handle_Details(res, req.query);
 })
 
-app.get('/edit', checkRole(['staff', 'manager', 'storage']), isLoggedIn,(req,res) => {
-    handle_Edit(res, req.query);
+app.get('/edit', checkRole(['staff', 'manager', 'storage']), isLoggedIn, (req, res) => {
+  handle_Edit(res, req.query);
 })
 
-app.post('/update', checkRole(['staff', 'manager', 'storage']), isLoggedIn,(req,res) => {
-    handle_Update(req, res);
+app.post('/update', checkRole(['staff', 'manager', 'storage']), isLoggedIn, (req, res) => {
+  handle_Update(req, res);
 })
 
-app.get('/delete', checkRole(['staff', 'manager', 'storage']), isLoggedIn,(req,res) => {
-    handle_Delete(req, res);
+app.get('/delete', checkRole(['staff', 'manager', 'storage']), isLoggedIn, (req, res) => {
+  handle_Delete(req, res);
 })
 
 // ===== 404 Handler =====
