@@ -175,6 +175,7 @@ passport.use(new LocalStrategy({
 // ===== Passport Serialize and Deserialize Users =====
 // Passport uses serializeUser function to persist user data into session
 passport.serializeUser(function (user, done) {
+  console.log('Serializing user:', user.id);
   done(null, user.id); // Store MongoDB _id in session
 });
 
@@ -196,6 +197,20 @@ passport.deserializeUser(async function (id, done) {
 // ===== Middleware Setup =====
 app.set('trust proxy', 1);
 // 1. Session configuration
+//localhost
+app.use(session({
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    maxAge: 24 * 60 * 60 * 1000, // 24 hours
+    httpOnly: true,
+    secure: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
+  }
+}));
+/*Production
 app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
@@ -207,6 +222,7 @@ app.use(session({
     sameSite: 'none'
   }
 }));
+*/
 
 
 // 2. Initialize passport and session for persistent login sessions
@@ -275,7 +291,7 @@ const findDocument = async (db, criteria, projection = null) => {
     cursor = collection.find(criteria);
   }
   const findResults = await cursor.toArray();
-  console.log(`findDocument: ${findResults.length}`);
+  //console.log(`findDocument: ${findResults.length}`); // Toooooo long in console
   // console.log(`findResults: ${JSON.stringify(findResults)}`);  // optional
   return findResults;
 };
