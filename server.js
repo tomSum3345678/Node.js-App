@@ -175,7 +175,7 @@ passport.use(new LocalStrategy({
 // ===== Passport Serialize and Deserialize Users =====
 // Passport uses serializeUser function to persist user data into session
 passport.serializeUser(function (user, done) {
-  console.log('Serializing user:', user.id);
+  //console.log('Serializing user:', user.id);
   done(null, user.id); // Store MongoDB _id in session
 });
 
@@ -197,7 +197,7 @@ passport.deserializeUser(async function (id, done) {
 // ===== Middleware Setup =====
 app.set('trust proxy', 1);
 // 1. Session configuration
-//localhost
+/*localhost
 app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
@@ -209,8 +209,8 @@ app.use(session({
     secure: process.env.NODE_ENV === 'production',
     sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
   }
-}));
-/*Production
+}));*/
+//Render Production
 app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
@@ -222,7 +222,7 @@ app.use(session({
     sameSite: 'none'
   }
 }));
-*/
+
 
 
 // 2. Initialize passport and session for persistent login sessions
