@@ -201,7 +201,7 @@ passport.deserializeUser(async function (id, done) {
 // ===== Middleware Setup =====
 app.set('trust proxy', 1);
 // 1. Session configuration
-//localhost
+/*localhost
 app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
@@ -213,9 +213,9 @@ app.use(session({
     secure: process.env.NODE_ENV === 'production',
     sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
   }
-}));
+}));*/
 //Render Production
-/*app.use(session({
+app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
@@ -225,7 +225,7 @@ app.use(session({
     secure: true,
     sameSite: 'none'
   }
-}));*/
+}));
 
 
 
