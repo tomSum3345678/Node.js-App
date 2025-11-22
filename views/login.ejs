@@ -5,6 +5,138 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><%= title %> - Supermarket System</title>
 </head>
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+    margin: 0;
+    padding: 0;
+}
+
+.login-wrapper {
+    max-width: 400px;
+    margin: 80px auto;
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.login-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+h1 {
+    font-size: 24px;
+    color: #333;
+}
+
+p {
+    color: #666;
+}
+
+.messages {
+    background-color: #ffdddd;
+    color: #a94442;
+    padding: 10px;
+    border: 1px solid #f5c6cb;
+    border-radius: 5px;
+    margin-bottom: 15px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #333;
+}
+
+input[type="email"],
+input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+button {
+    width: 100%;
+    padding: 10px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #218838;
+}
+
+.divider {
+    text-align: center;
+    margin: 15px 0;
+}
+
+.divider span {
+    background: white;
+    padding: 0 10px;
+}
+
+.btn-google {
+    background-color: white;
+    color: #111111;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    border: 1px solid #111111;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.btn-google:hover {
+    background-color: #f9f9f9;
+}
+
+.btn-google img {
+    margin-right: 8px;
+}
+
+.test-accounts {
+    margin-top: 20px;
+}
+
+.footer {
+    text-align: center;
+    margin-top: 20px;
+    color: #666;
+}
+
+.footer p {
+    margin: 5px 0;
+}
+
+@media (max-width: 480px) {
+    .login-wrapper {
+        width: 90%;
+        padding: 15px;
+    }
+
+    h1 {
+        font-size: 20px;
+    }
+}
+</style>
 <body>
   <div class="login-wrapper">
     <div class="login-header">
@@ -71,6 +203,12 @@
           <li><strong>Storage:</strong> <code>bob@supermarket.com</code> / <code>STORAGE</code></li>
           <li><strong>Manager:</strong> <code>carol@supermarket.com</code> / <code>MANAGER</code></li>
         </ul>
+      </div>
+    </div>
+
+    <!-- Signup Link -->
+      <div class="signup-link">
+        <p>Don't have an account? <a href="/signup">Sign up here</a></p>
       </div>
     </div>
     
