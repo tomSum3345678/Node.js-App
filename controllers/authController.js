@@ -101,3 +101,80 @@ exports.checkAuthStatus = (req, res) => {
     });
   }
 };
+
+exports.showSignupPage = (req, res) => {
+  if (req.isAuthenticated()) {
+    return res.redirect('/');
+  }
+  res.render('signup', {
+    title: 'Signup',
+    messages: req.session.messages || []
+  });
+  req.session.messages = [];
+};
+
+exports.processSignup = async (req, res) => {
+  try {
+    const { firstName, lastName, email, password, confirmPassword } = req.fields;
+
+    if (!email || !password || !confirmPassword) {
+      req.session.messages = ['Please fill in all required fields'];
+      return res.redirect('/signup');
+    }
+
+    if (password !== confirmPassword) {
+      req.session.messages = ['Passwords do not match'];
+      return res.redirect('/signup');
+    }
+
+    if (password.length < 6) {
+      req.session.messages = ['Password must be at least 6 characters long'];
+      return res.redirect('/signup');
+    }
+
+
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      req.session.messages = ['Email is already registered'];
+      return res.redirect('/signup');
+    }
+
+
+    const generateUserId = async () => {
+      const randomNum = Math.floor(Math.random() * 900000) + 100000;
+      const userId = `USER${randomNum}`;
+      const existingUser = await User.findOne({ userId });
+      if (existingUser) {
+        return generateUserId();
+      }
+      return userId;
+    };
+
+    const userId = await generateUserId();
+
+
+    const newUser = new User({
+      userId,
+      email,
+      password, 
+      firstName,
+      lastName,
+      provider: 'local',
+      role: 'end-user',
+      permissions: ['view_products', 'place_orders'],
+      createdAt: new Date(),
+      lastLogin: new Date()
+    });
+
+    await newUser.save();
+
+    console.log('New user created:', newUser.email, 'with userId:', newUser.userId);
+
+    req.session.messages = ['Account created successfully! Please log in'];
+    res.redirect('/login');
+  } catch (error) {
+    console.error('Error during signup:', error);
+    req.session.messages = ['An error occurred during signup. Please try again later'];
+    res.redirect('/signup');
+  }
+};

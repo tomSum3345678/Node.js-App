@@ -26,10 +26,14 @@ const authController = require('./controllers/authController');
 mongodb ^6.9: https://www.npmjs.com/package/mongodb
 */
 const { MongoClient, ObjectId } = require("mongodb");
-const mongourl = 'mongodb+srv://test1:test1@cluster0.sdtvkpd.mongodb.net/?appName=Cluster0';
+//const mongourl = 'mongodb+srv://test1:test1@cluster0.sdtvkpd.mongodb.net/?appName=Cluster0';
+const mongourl = process.env.MONGODB_URI.replace('supermarket_db?retryWrites=true&w=majority', '?appName=Cluster0');
+
 const client = new MongoClient(mongourl);
 const dbName = 'supermarket_db';
 const collectionName = "products";
+
+const t = (new Date()).toString() + Math.floor(Math.random() * 1000000);
 
 // ===== Mongoose Connection (for User authentication) =====
 mongoose.connect(process.env.MONGODB_URI)
@@ -197,7 +201,7 @@ passport.deserializeUser(async function (id, done) {
 // ===== Middleware Setup =====
 app.set('trust proxy', 1);
 // 1. Session configuration
-/*localhost
+//localhost
 app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
@@ -209,9 +213,9 @@ app.use(session({
     secure: process.env.NODE_ENV === 'production',
     sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
   }
-}));*/
+}));
 //Render Production
-app.use(session({
+/*app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
@@ -221,7 +225,7 @@ app.use(session({
     secure: true,
     sameSite: 'none'
   }
-}));
+}));*/
 
 
 
@@ -272,8 +276,8 @@ function checkRole(allowedRoles) {
 }
 
 
-const insertDocument = async (db, doc) => {
-  var collection = db.collection(collectionName);
+const insertDocument = async (db, doc, collectionname = collectionName) => {
+  var collection = db.collection(collectionname);
   let results = await collection.insertOne(doc);
   console.log("insert one document:" + JSON.stringify(results));
   return results;
@@ -296,9 +300,9 @@ const findDocument = async (db, criteria, projection = null) => {
   return findResults;
 };
 
-const updateDocument = async (db, criteria, updateDoc) => {
+const updateDocument = async (db, criteria, updateDoc, collectionname = collectionName) => {
   let updateResults = [];
-  let collection = db.collection(collectionName);
+  let collection = db.collection(collectionname);
   console.log(`updateCriteria: ${JSON.stringify(criteria)}`);
   updateResults = await collection.updateOne(criteria, { $set: updateDoc });
   console.log(`updateResults: ${JSON.stringify(updateResults)}`);
@@ -344,10 +348,13 @@ async function syncUsersFromMongoDB() {
 
 app.get("/login", authController.showLoginPage);
 app.post("/login", authController.processLogin);
+
 app.get('/auth/google', passport.authenticate('google', { scope: ['email', 'profile'] }));
 app.get('/auth/google/callback',
   passport.authenticate('google', { failureRedirect: '/login', failureMessage: true }),
   authController.googleCallback);
+app.get('/signup', authController.showSignupPage);
+app.post('/signup', authController.processSignup);
 app.get("/logout", authController.logout);
 app.get('/auth/status', authController.checkAuthStatus);
 
@@ -430,7 +437,7 @@ app.delete('/api/products/delete/:productId', async (req, res) => {
 
 
 // Web UI Handlers
-const handle_Create = async (req, res) => {
+const handle_Create_Product = async (req, res) => {
   try {
     await client.connect();
     console.log("Connected successfully to server");
@@ -455,6 +462,103 @@ const handle_Create = async (req, res) => {
     res.status(500).render('info', { message: `Error: ${error.message}` });
   }
 }
+
+const handle_Create_Invoice = async (req, res) => {
+    try {
+        await client.connect();
+        console.log("Connected successfully to server");
+        const db = client.db(dbName);
+        const { userId, cartId } = req.fields;
+        if (!userId || !cartId) {
+            return res.status(400).send({ message: 'Missing userId or cartId' });
+        }
+        let items = [];
+        let index = 0;
+        while (true) {
+            const productId = req.fields[`items[${index}][productId]`];
+            if (productId === undefined) break; // Stop loop if no more items
+            items.push({
+                productId: productId,
+                productName: req.fields[`items[${index}][productName]`],
+                quantity: parseInt(req.fields[`items[${index}][quantity]`], 10),
+                unitPrice: parseFloat(req.fields[`items[${index}][unitPrice]`]),
+                totalPrice: parseFloat(req.fields[`items[${index}][totalPrice]`])
+            });
+            index++; 
+        }
+
+        // Generate a unique ID for the invoice
+        let invoiceId = `INV-${Date.now()}`;
+        let newInvoice = {
+            invoiceId: invoiceId,
+            userId: userId,
+            cartId: cartId,
+            items: items,
+            totalAmount: items.reduce((total, item) => total + item.totalPrice, 0),
+            createdAt: new Date(),
+            updatedAt: new Date()
+        };
+
+        await insertDocument(db, newInvoice, 'invoices');
+        await db.collection('carts').deleteOne({ userId: userId });
+        res.redirect(`/invoice/${invoiceId}`);
+    } catch (error) {
+        console.error("Error creating invoice:", error);
+        res.status(500).render('info', { message: `Error: ${error.message}` });
+    }
+};
+
+const Handle_Delete_Cart = async (req, res) => {
+    try {
+        await client.connect();
+        console.log("Connected successfully to server");
+        const db = client.db(dbName);
+        const { userId, cartId } = req.fields;
+        await db.collection('carts').deleteOne({ userId: userId });
+        res.redirect(`/`);
+    } catch (error) {
+        console.error("Error", error);
+        res.status(500).render('info', { message: `Error: ${error.message}` });
+    }
+};
+
+const handle_Add_To_Cart = async (req, res) => {
+    try {
+    
+        await client.connect();
+        console.log("Connected successfully to server");
+        const db = client.db(dbName);
+        const { userId, productId, quantity } = req.fields;
+        let UserId = '';
+        if(userId == null || userId == ''){ 
+        UserId = t;
+        } else { 
+        UserId = userId;
+        }
+        const doc = await db.collection('carts').findOne({ userId: UserId });
+        if(doc){
+          handle_Update(req, res, 2);
+        }else{
+        let cartId = `Cart-${Date.now()}`;
+        let cart = {
+            cartId: cartId,
+            userId: UserId,
+            items: [{
+productId: productId, 
+quantity: Number(quantity),
+addedAt: new Date()
+}],
+            updatedAt: new Date()
+        };
+
+        await insertDocument(db, cart, 'carts');
+        res.redirect(`/`);
+        }
+    } catch (error) {
+        console.error("Error creating invoice:", error);
+        res.status(500).render('info', { message: `Error: ${error.message}` });
+    }
+};
 
 const handle_Find = async (res, criteria = {}) => {
   try {
@@ -496,14 +600,14 @@ const handle_Edit = async (res, criteria) => {
   }
 }
 
-const handle_Update = async (req, res) => {
+const handle_Update = async (req, res, i = 1) => {
   try {
     await client.connect();
     console.log("Connected successfully to server");
     const db = client.db(dbName);
+    if(i==1){
     let DOCID = {};
     DOCID['_id'] = new ObjectId(req.fields._id);
-
     let updateDoc = {
       productName: req.fields.productName,
       category: req.fields.category,
@@ -519,6 +623,46 @@ const handle_Update = async (req, res) => {
 
     const results = await updateDocument(db, DOCID, updateDoc);
     res.status(200).render('info', { message: `Updated ${results.modifiedCount} product(s)` });
+    }else if(i==2){
+     const userId = req?.user?.userId || t;
+     const productId = req.fields.productId;
+     const quantityToAdd = parseInt(req.fields.quantity, 10);
+     const cartDoc = await db.collection('carts').findOne({ userId });
+
+        let updateDoc;
+
+        if (cartDoc) {
+            // If cart document exists, check for the product
+            const itemIndex = cartDoc.items.findIndex(item => item.productId === productId);
+
+            if (itemIndex > -1) {
+                // Product exists, update the quantity
+                cartDoc.items[itemIndex].quantity += quantityToAdd;
+            } else {
+                // Product doesn't exist, add new product
+                const newItem = {
+                    productId,
+                    quantity: quantityToAdd,
+                    addedAt: new Date()
+                };
+                cartDoc.items.push(newItem);
+            }
+
+            updateDoc = {
+                items: cartDoc.items, // Updated items array
+                updatedAt: new Date()
+            };
+
+            // Update the cart document
+            const results = await db.collection('carts').updateOne(
+                { userId },
+                { $set: updateDoc }
+            );
+
+            res.status(200).render('info', { message: `Updated ${results.modifiedCount} item(s)` });
+ 
+     }
+    }
   } catch (error) {
     res.status(500).render('info', { message: `Error: ${error.message}` });
   }
@@ -588,6 +732,24 @@ app.get('/content', async (req, res) => {
       user: req.user || null,
       isAuthenticated: req.isAuthenticated()
     });
+      if(req?.user){
+  try{
+  
+    const userId = req.user.userId;
+    if (t && userId) {
+      const result = await db.collection('carts').updateMany(
+        { 
+        userId: t,
+        userId: { $ne: userId }
+        },
+        { $set: { userId: userId } }
+      );
+    }
+  }catch(error){
+    console.log("ERROR",error.message);//Error or userId already exists
+  }
+  }
+  
   } catch (error) {
     res.status(500).render('info', {
       message: `Error: ${error.message}`
@@ -595,13 +757,113 @@ app.get('/content', async (req, res) => {
   }
 });
 
+// Shopping Cart
+app.get('/shoppingcart', async (req, res) => {
+console.log(t);
+if(req.user==null&&1==2){
+	res.redirect('/login');
+}else{
+  const user = req?.user || { userId: t };
+  try {
+    await client.connect();
+    console.log("Connected successfully to server");
+    const db = client.db(dbName);
+
+    const cart =  await db.collection('carts').find({userId:user.userId}).toArray();
+    const products =  await db.collection('products').find({}).toArray();
+
+ if (cart.length > 0 && products.length > 0) {
+  cart[0].items.forEach(cartItem => {
+    products.forEach(product => {
+      if (cartItem.productId === product.productId) { 
+        cartItem.productName = product.productName;
+        cartItem.productImage = product.productImage || null; 
+        cartItem.unitPrice = product.price; 
+        }
+      });
+    });
+  }
+	
+   res.status(200).render('shoppingcart', {
+      nCart: cart.length || 0,
+      cart: cart || [],
+      user: req.user || null,
+      isAuthenticated: req.isAuthenticated()
+    });
+  } catch (error) {
+    res.status(500).render('info', {
+      message: `Error: ${error.message}`
+    });
+  }
+ }
+});
+
+app.get('/invoice', async (req, res) => {
+
+    try {
+    if(req.user==null){
+	res.redirect('/login');
+}else{
+        await client.connect();
+        console.log("Connected successfully to server");
+        const db = client.db(dbName);
+
+        const invoice = await db.collection('invoices').find({ userId: req.user.userId }).toArray();
+
+        res.render('invoice', { manyInvoices: invoice });
+        }
+    } catch (error) {
+        console.error("Error fetching invoice:", error);
+        res.status(500).render('info', { message: `Error: ${error.message}` });
+    }
+    
+});
+
+
+app.get('/invoice/:invoiceId', async (req, res) => {
+    const { invoiceId } = req.params;
+
+    try {
+        await client.connect();
+        console.log("Connected successfully to server");
+        const db = client.db(dbName);
+
+        // Fetch the invoice details from the database
+        const invoice = await db.collection('invoices').findOne({ invoiceId: invoiceId });
+
+        if (!invoice) {
+            return res.status(404).render('info', { message: 'Invoice not found' });
+        }
+
+        // Render the invoice view with the retrieved invoice data
+        res.render('invoice', { invoice });
+    } catch (error) {
+        console.error("Error fetching invoice:", error);
+        res.status(500).render('info', { message: `Error: ${error.message}` });
+    }
+});
+
+
 app.get('/create', checkRole(['staff', 'manager', 'storage']), isLoggedIn, (req, res) => {
   res.status(200).render('create', { user: 'admin' });
 })
 
 app.post('/create', checkRole(['staff', 'manager', 'storage']), isLoggedIn, (req, res) => {
-  handle_Create(req, res);
+  handle_Create_Product(req, res);
 })
+
+app.post('/create-invoice', checkRole(['end-user']), isLoggedIn, (req, res) => {
+    handle_Create_Invoice(req, res);
+});
+
+app.post('/delete-cart', (req, res) => {
+    Handle_Delete_Cart(req, res);
+});
+
+
+app.post('/add-to-cart', (req, res) => {
+    handle_Add_To_Cart(req, res);
+});
 
 app.get('/find', checkRole(['staff', 'manager', 'storage']), isLoggedIn, (req, res) => {
   let criteria = {};
@@ -611,6 +873,7 @@ app.get('/find', checkRole(['staff', 'manager', 'storage']), isLoggedIn, (req, r
 })
 
 app.get('/details', (req, res) => {
+console.log("session ===== ",req.session);
   handle_Details(res, req.query);
 })
 
@@ -659,7 +922,6 @@ process.on('SIGINT', async () => {
   console.log(' Database connections closed');
   process.exit(0);
 });
-
 
 
 

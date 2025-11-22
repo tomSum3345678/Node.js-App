@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice - Supermarket Management System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0px;
+        }
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #8e4585;
+  color: white;
+  padding: 10px 20px;
+}
+
+.navbar-brand {
+  font-size: 24px;
+}
+
+.navbar-actions {
+  display: flex;
+  align-items: center;
+}
+
+.custom-link {
+  color: inherit;
+  text-decoration: none;
+  position: relative;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  margin-right: 20px;
+}
+
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+        .invoice-container {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            margin:auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        .info {
+            margin-bottom: 20px;
+            font-size: 18px;
+            color: #555;
+        }
+
+        .info span {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #3498db;
+            color: white;
+        }
+
+        .total {
+            margin-top: 20px;
+            font-size: 20px;
+            font-weight: bold;
+            text-align: right;
+            color: #333;
+        }
+
+        .buttons {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .buttons a {
+            padding: 10px 20px;
+            background-color: #3498db;
+            color: white;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+
+        .buttons a:hover {
+            background-color: #2980b9;
+        }
+    </style>
+    <nav class="navbar">
+    <div class="navbar-brand">
+     <a href='/' class="custom-link">🏠︎Home</a>
+    </div>
+    
+    <div class="navbar-actions">
+      <% if (isAuthenticated) { %>
+        <div class="user-info">
+          <% if (user.picture) { %>
+            <img src="<%= user.picture %>" alt="Avatar" class="user-avatar">
+          <% } else { %> 
+          <% } %>
+          <span style="color: #333; font-weight: 600;">
+            <%= user.displayName || user.email %>
+          </span>
+        </div>
+        
+        <% if (['staff', 'manager', 'storage'].includes(user.role)) { %>
+          <a href="/find" class="btn btn-dashboard">📊 Dashboard</a>
+        <% } %>
+        
+        <a href="/logout" class="btn btn-logout">🚪 Logout</a>
+      <% } else { %>
+        <a href="/login" class="btn btn-login">🔐 Login</a>
+      <% } %>
+    </div>
+  </nav>
+    <div class='body'>
+</head>
+<body>
+
+<% if(typeof invoice !== 'undefined'){ %>
+    <div class="invoice-container">
+        <h1>Invoice</h1>
+        <div class="info">
+            <div><span>Invoice ID:</span> <%= invoice.invoiceId %></div>
+            <div><span>User ID:</span> <%= invoice.userId %></div>
+            <div><span>Cart ID:</span> <%= invoice.cartId %></div>
+            <div><span>Date:</span> <%= invoice.createdAt.toLocaleDateString() %></div>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Product ID</th>
+                    <th>Product Name</th>
+                    <th>Quantity</th>
+                    <th>Unit Price</th>
+                    <th>Total Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% invoice.items.forEach(item => { %>
+                    <tr>
+                        <td><%= item.productId %></td>
+                        <td><%= item.productName %></td>
+                        <td><%= item.quantity %></td>
+                        <td>$<%= item.unitPrice.toFixed(2) %></td>
+                        <td>$<%= item.totalPrice.toFixed(2) %></td>
+                    </tr>
+                <% }); %>
+            </tbody>
+        </table>
+
+        <div class="total">Total Amount: $<%= invoice.totalAmount.toFixed(2) %></div>
+    </div>
+<% } else if (typeof manyInvoices !== 'undefined' && manyInvoices.length > 0) { %>
+    <div class="invoices-container">
+        <h1>Invoices</h1>
+        <% manyInvoices.forEach(invoice => { %>
+            <div class="invoice-container">
+                <h2>Invoice ID: <%= invoice.invoiceId %></h2>
+                <div class="info">
+                    <div><span>User ID:</span> <%= invoice.userId %></div>
+                    <div><span>Cart ID:</span> <%= invoice.cartId %></div>
+                    <div><span>Date:</span> <%= new Date(invoice.createdAt).toLocaleDateString() %></div>
+                </div>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Product ID</th>
+                            <th>Product Name</th>
+                            <th>Quantity</th>
+                            <th>Unit Price</th>
+                            <th>Total Price</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% invoice.items.forEach(item => { %>
+                            <tr>
+                                <td><%= item.productId %></td>
+                                <td><%= item.productName %></td>
+                                <td><%= item.quantity %></td>
+                                <td>$<%= item.unitPrice.toFixed(2) %></td>
+                                <td>$<%= item.totalPrice.toFixed(2) %></td>
+                            </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
+
+                <div class="total">Total Amount: $<%= invoice.totalAmount.toFixed(2) %></div>
+            </div>
+            <h1></h1>
+        <% }); %>
+    </div>
+<% } else { %>
+    <div class="alert alert-danger">No invoices found!</div>
+<% } %>
+</body>
+</html>
