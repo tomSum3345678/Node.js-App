@@ -258,31 +258,31 @@ curl -X DELETE https://comp3810sef-group11.onrender.com/api/products/delete/PROD
 5. Checkout: Generate invoice via "Checkout" button
 
 # Shopping Cart APIs CRUD curl operation:   
-1. Get cart contents from public user:
+1. Get cart contents from public user:  
      curl -X GET "https://comp3810sef-group11.onrender.com/api/cart"
-2. Add item to cart to public user:
+2. Add item to cart to public user:  
 curl -X POST "https://comp3810sef-group11.onrender.com/api/cart/add" \
   -H "Content-Type: application/json" \
   -d '{"productId":"PROD004","quantity":2}'
-3. Update cart item:
+3. Update cart item:  
    curl -X PUT "https://comp3810sef-group11.onrender.com/api/cart/update" \
   -H "Content-Type: application/json" \
   -d '{"productId":"PROD004","quantity":5}'
-4. Delete cart item
+4. Delete cart item:  
    curl -X DELETE "https://comp3810sef-group11.onrender.com/api/cart/remove/PROD005"
 
 # CRUD web pages provide the Login button (Cart)
-1. Get cart contents from user:
+1. Get cart contents from user:  
  curl -X GET "https://comp3810sef-group11.onrender.com/api/cart?userId=USER001"
-2. Add item to cart to user:
+2. Add item to cart to user:  
 curl -X POST "https://comp3810sef-group11.onrender.com/api/cart/add" \
   -H "Content-Type: application/json" \
   -d '{"productId":"PROD004","quantity":2,"userId":"USER001"}'
-3. Update cart:
+3. Update cart:  
    curl -X PUT "https://comp3810sef-group11.onrender.com/api/cart/update?userId=USER001" \
   -H "Content-Type: application/json" \
   -d '{"productId":"PROD004","quantity":5}'
-4. Delete cart item:
+4. Delete cart item:  
    curl -X DELETE "https://comp3810sef-group11.onrender.com/api/cart/remove/PROD005?userId=USER001"
 
 # Search and Filter APIs curl operation:
