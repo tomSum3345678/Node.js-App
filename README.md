@@ -125,7 +125,7 @@ NODE_JS-APP/
      users.bson/metadata.json: User account information
      carts.bson/metadata.json: Shopping cart data
      permissions.bson/metadata.json: User permission settings
-=======
+
 
 /models
 1. User.js: Mongoose schema for user authentication with support for:
