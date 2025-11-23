@@ -14,7 +14,7 @@ Shih Wai Tai(13898119)
 
 Ming Chun Wing(14218294)  
 
-CHAN Chi Ho(12890916)
+CHAN Chi Ho(12980916)
 
 
 # Technology Stack
