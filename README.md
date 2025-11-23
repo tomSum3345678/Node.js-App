@@ -4,7 +4,11 @@ A comprehensive supermarket product management system built with Node.js and Mon
 # Project Information
 Group Number : 11
 student name & SID :
+SUM Ka On(13896581)
+SHAM Ying Ho(13975793)
+Shih Wai Tai(13898119)
 Ming Chun Wing(14218294)
+CHAN Chi Ho(12890916)
 
 
 # Technology Stack
