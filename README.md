@@ -20,6 +20,7 @@ Email: alice@supermarket.com / Password : STAFF (staff user role)
 
 # Project File Structure
 NODE_JS-APP/
+
 ├── 📁 .git/                     # Version control
 
 ├── 📁 controllers/              # Authentication Controller layer
@@ -34,33 +35,60 @@ NODE_JS-APP/
 
 ├── 📁 supermarket_db/          # MongoDB database backup
 
-│   ├── 📄 carts.bson           
+│   ├── 📄 carts.bson     
+
 │   ├── 📄 carts.metadata.json
+
 │   ├── 📄 permissions.bson     
+
 │   ├── 📄 permissions.metadata.json
+
 │   ├── 📄 prelude.json
+
 │   ├── 📄 products.bson        
+
 │   ├── 📄 products.metadata.json
+
 │   ├── 📄 users.bson           
+
 │   └── 📄 users.metadata.json
+
 ├── 📁 views/                   # EJS template files
+
 │   ├── 📄 content.ejs          # Main page
+
 │   ├── 📄 create.ejs           # Create product page
+
 │   ├── 📄 details.ejs          # Product details page
+
 │   ├── 📄 edit.ejs             # Edit product page
+
 │   ├── 📄 info.ejs             # System information page
+
 │   ├── 📄 invoice.ejs          # Invoice page
+
 │   ├── 📄 list.ejs             # Product list page
+
 │   ├── 📄 login.ejs            # Login page
+
 │   ├── 📄 navbar.ejs           # Navigation bar component
+
 │   ├── 📄 shoppingcart.ejs     # Shopping cart page
+
 │   └── 📄 signup.ejs           # Registration page
+
 ├── 📄 .env                     # Environment variables configuration
+
 ├── 📄 DB.js                    # Database connection configuration backup
+
 ├── 📄 package.json             # Project dependencies configuration
+
 ├── 📄 package-lock.json        # Lock dependency versions
+
 ├── 📄 README.md               # Project documentation
+
 └── 📄 server.js               # Main server file
+
 
 # MongoDB Database Tools (Use mongodump.exe)
 Database Backup
