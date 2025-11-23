@@ -303,12 +303,11 @@ curl -X GET "https://your-server.com/api/products/search?q=laptop&category=Elect
 Get categories
 GET /api/categories
 curl -X GET "https://your-server.com/api/categories"
-=======
 curl -X GET "https://node-js-app-1-9vi5.onrender.com/api/products/search?q=laptop&category=Electronics"
 Get categories
 GET /api/categories
 curl -X GET "https://node-js-app-1-9vi5.onrender.com/api/categories"
->>>>>>> ab93c7c44636f765c47689ca07459056e6dd6ab3
+
 
 # Installation and Setup
 local MongoDB installation
@@ -325,11 +324,8 @@ Database Restore
 
 # localhost Operation Guides
 1. Clone the Project
-<<<<<<< HEAD
 git clone https://github.com/tomSum3345678/Node.js-App.git
-=======
 git clone https://github.com/tomSum3345678/COMP3810SEF-Group11.git
->>>>>>> ab93c7c44636f765c47689ca07459056e6dd6ab3
 cd Node.js-App
 2. Install Dependencies
 npm install passport passport-local passport-google-oauth20 express express-session connect-mongo mongoose bcryptjs dotenv
