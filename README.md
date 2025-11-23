@@ -15,8 +15,8 @@ Version Control: Git
 Production Environment: https://node-js-app-1-9vi5.onrender.com
 
 # Test Accounts
-End User: john@example.com / USER
-Staff: alice@supermarket.com / STAFF
+Email: john@example.com / Password : USER (customer user role)
+Email: alice@supermarket.com / Password : STAFF (staff user role)
 
 # Project File Structure
 NODE_JS-APP/
