@@ -200,11 +200,11 @@ Delete Product:
      
 #  Product APIs curl operation:
 ```
-curl -X POST https://comp3810sef-group11.onrender.com/api/products -F "productId=PROD009" -F "productName=Banana" -F "category=Food" -F "price=10" -F "stock=150" -F "description=A fresh yellow banana, great source of potassium." -F "productImage=@banana.jpeg"
+curl -X POST https://comp3810sef-group11.onrender.com/api/products -F "productId=PROD009" -F "productName=Banana" -F "category=Food" -F "price=10" -F "stock=150" -F "description=A fresh yellow banana, great source of potassium." -F "productImage=@banana.jpg"
 ```
 
 ```
-curl -X PUT https://comp3810sef-group11.onrender.com/api/products/update/PROD009 -F "productName=Banana" -F "category=Food" -F "price=12.50" -F "stock=150" -F "description=Freshly updated price for this tasty banana." -F "productImage=@banana.jpeg"
+curl -X PUT https://comp3810sef-group11.onrender.com/api/products/update/PROD009 -F "productName=Banana" -F "category=Food" -F "price=12.50" -F "stock=150" -F "description=Freshly updated price for this tasty banana." -F "productImage=@banana.jpg"
 ```
 
 ```
