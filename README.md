@@ -5,13 +5,9 @@ A comprehensive supermarket product management system built with Node.js and Mon
 
 # Project Information
 Group Number : 11
-<<<<<<< HEAD
 student name & SID :
-=======
-student name (SID) : 
-
 Ming Chun Wing(14218294)
->>>>>>> ab93c7c44636f765c47689ca07459056e6dd6ab3
+
 
 # Technology Stack
 Backend: Node.js, Express.js
