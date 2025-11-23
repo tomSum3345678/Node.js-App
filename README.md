@@ -91,8 +91,10 @@ NODE_JS-APP/
 
 
 # MongoDB Database Tools (Use mongodump.exe)
+
 Database Backup
 .\mongodump --uri="mongodb+srv://<username>:<passward>@cluster0.sdtvkpd.mongodb.net/supermarket_db" --out=D:\xampp\htdocs\Node.js-App
+
 Database Restore
 .\mongorestore --uri="mongodb+srv://<username>:<passward>@cluster0.sdtvkpd.mongodb.net/supermarket_db" --dir="D:\xampp\htdocs\Node.js-App\supermarket_db"
 
