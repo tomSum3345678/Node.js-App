@@ -297,16 +297,9 @@ curl -X DELETE "https://node-js-app-1-9vi5.onrender.com/api/cart/remove/[product
 
 # Search and Filter APIs curl operation:
 Search products
-GET /api/products/search?q=searchterm&category=Electronics&minPrice=10&maxPrice=100
-<<<<<<< HEAD
-curl -X GET "https://your-server.com/api/products/search?q=laptop&category=Electronics"
-Get categories
-GET /api/categories
-curl -X GET "https://your-server.com/api/categories"
-curl -X GET "https://node-js-app-1-9vi5.onrender.com/api/products/search?q=laptop&category=Electronics"
-Get categories
-GET /api/categories
-curl -X GET "https://node-js-app-1-9vi5.onrender.com/api/categories"
+1. curl -X GET "https://node-js-app-1-9vi5.onrender.com/api/products"
+2. curl -X GET "https://node-js-app-1-9vi5.onrender.com/api/products?category=Beverages"
+3. curl -X GET "https://node-js-app-1-9vi5.onrender.com/api/products?productName=Orange"
 
 
 # Installation and Setup
