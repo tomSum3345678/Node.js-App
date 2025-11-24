@@ -254,9 +254,9 @@ Database Restore
 ```
 # localhost Operation Guides
 1. Clone the Project
-```
+     ```
      git clone https://github.com/tomSum3345678/COMP3810SEF-Group11.git
-```
+     ```
 2. cd COMP3810SEF-Group11
 3. Install Dependencies  
 ```
