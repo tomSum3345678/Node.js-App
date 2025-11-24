@@ -35,7 +35,7 @@ Production Environment: https://comp3810sef-group11.onrender.com/
 
 # Project File Structure
 ```
-NODE_JS-APP/
+COMP3810SEF-Group11/
 ├── 📁 .git/                     # Version control
 ├── 📁 controllers/              # Authentication Controller layer
 │   └── 📄 authController.js     
