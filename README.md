@@ -260,8 +260,8 @@ Database Restore
 npm install passport passport-local passport-google-oauth20 express express-session connect-mongo mongoose bcryptjs dotenv
 4. Environment Variables Configuration
 make sure production of GOOGLE_CALLBACK_URL in the .env was comment
-5. start with localhost
+5. Start with localhost  
 please comment the code of Middleware Setup in server.js from line 218 - 228  
 Uncomment the code of Middleware Setup in server.js from line 203 - 216
-6. npm start
+6. npm start  
 The application will start at http://localhost:8099
