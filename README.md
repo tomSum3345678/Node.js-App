@@ -267,13 +267,13 @@ Database Restore
      ```
 4. Environment Variables Configuration
 Make sure production of GOOGLE_CALLBACK_URL in the COMP3810SEF-Group11-main/.env was commented like so
-     ```
-#GOOGLE_CALLBACK_URL=https://comp3810sef-group11.onrender.com/auth/google/callback
-     ```
+
+  #GOOGLE_CALLBACK_URL=https://comp3810sef-group11.onrender.com/auth/google/callback
+
 Make sure GoogleStrategy in the COMP3810SEF-Group11-main/server.js was set as
 proxy: false like so
      ```
-……
+  ……
   clientID: process.env.GOOGLE_CLIENT_ID,
   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
   callbackURL: process.env.GOOGLE_CALLBACK_URL,
@@ -281,35 +281,35 @@ proxy: false like so
   // proxy: true
   // false for localhost testing
   proxy: false
- ……
+  ……
      ```
-     Make sure comment the code of Middleware Render Production Setup in server.js from line 220 - 232 and uncomment middleware localhost session like so
+Make sure comment the code of Middleware Render Production Setup in server.js from line 220 - 232 and uncomment middleware localhost session like so
      ```
-// localhost
-app.use(session({
-  secret: process.env.SESSION_SECRET,
-  resave: false,
-  saveUninitialized: false,
-  cookie: {
-    maxAge: 24 * 60 * 60 * 1000, // 24 hours
-    httpOnly: true,
-    secure: false,
-    sameSite: 'lax'
-  }
-}));
-/*Render Production
-app.use(session({
-  secret: process.env.SESSION_SECRET,
-  resave: false,
-  saveUninitialized: false,
-  cookie: {
-    maxAge: 24 * 60 * 60 * 1000, // 24 hours
-    httpOnly: true,
-    secure: true,
-    sameSite: 'none'
-  }
-}));
-*/
+    // localhost
+    app.use(session({
+      secret: process.env.SESSION_SECRET,
+      resave: false,
+      saveUninitialized: false,
+      cookie: {
+        maxAge: 24 * 60 * 60 * 1000, // 24 hours
+        httpOnly: true,
+        secure: false,
+        sameSite: 'lax'
+      }
+    }));
+    /*Render Production
+    app.use(session({
+      secret: process.env.SESSION_SECRET,
+      resave: false,
+      saveUninitialized: false,
+      cookie: {
+        maxAge: 24 * 60 * 60 * 1000, // 24 hours
+        httpOnly: true,
+        secure: true,
+        sameSite: 'none'
+      }
+    }));
+    */
      ```
 5. Run "npm start"
      The application will start at http://localhost:8099
