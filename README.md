@@ -261,10 +261,9 @@ Database Restore
      git clone https://github.com/tomSum3345678/COMP3810SEF-Group11.git
      ```
 2. cd COMP3810SEF-Group11
+
 3. Install Dependencies
-     ```
-     npm install
-     ```
+   >Do not just "npm install"
      ```
      npm install passport passport-local passport-google-oauth20 express express-session connect-mongo mongoose bcryptjs dotenv
      ```
