@@ -14,7 +14,9 @@ Shih Wai Tai(13898119)
 
 Ming Chun Wing(14218294)  
 
-CHAN Chi Ho(12980916)
+CHAN Chi Ho(12980916)  
+
+GitHub Repository of the project: https://github.com/tomSum3345678/COMP3810SEF-Group11
 
 
 # Technology Stack
