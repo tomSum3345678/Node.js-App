@@ -1119,8 +1119,15 @@ app.get('/content', async (req, res) => {
     if (t && userId) {
       const result = await db.collection('carts').updateMany(
         { 
-        userId: t,
-        userId: { $ne: userId }
+       $and: [
+                    { userId: t },
+                    { userId: { $ne: userId } },
+                    { 
+                        $expr: { 
+                            $gt: [{ $strLenCP: "$userId" }, 25] 
+                        } 
+                    }
+                ]
         },
         { $set: { userId: userId } }
       );
@@ -1302,6 +1309,7 @@ process.on('SIGINT', async () => {
   console.log(' Database connections closed');
   process.exit(0);
 });
+
 
 
 
