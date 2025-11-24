@@ -41,7 +41,7 @@ NODE_JS-APP/
 │   └── 📄 authController.js     
 ├── 📁 models/                   # Data User models
 │   └── 📄 User.js              
-├── 📁 node_modules/            
+├── 📁 node_modules/            # After running npm install
 ├── 📁 supermarket_db/          # MongoDB database backup
 │   ├── 📄 carts.bson     
 │   ├── 📄 carts.metadata.json
