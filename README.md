@@ -263,19 +263,19 @@ Database Restore
 2. cd COMP3810SEF-Group11
 
 3. Install Dependencies
-   >Do not just "npm install", please run the following command:  
+   >Do not just run "npm install", please run the following command:
      ```
      npm install passport passport-local passport-google-oauth20 express express-session connect-mongo mongoose bcryptjs dotenv
      ```
 4. Environment Variables Configuration  
 
->Make sure the production `GOOGLE_CALLBACK_URL` in the `COMP3810SEF-Group11-main/.env` is commented out like so:
+   >Make sure the production `GOOGLE_CALLBACK_URL` in the `COMP3810SEF-Group11-main/.env` is commented out like so:
 
 ```
 #GOOGLE_CALLBACK_URL=https://comp3810sef-group11.onrender.com/auth/google/callback
 ```
 
->Make sure the `GoogleStrategy` in `COMP3810SEF-Group11-main/server.js` is set as `proxy: false` like so:  
+   >Make sure the `GoogleStrategy` in `COMP3810SEF-Group11-main/server.js` is set as `proxy: false` like so:  
 
 ```
 ...
@@ -289,7 +289,7 @@ proxy: false
 ...
 ```
 
->Make sure to comment out the code for Middleware Render Production Setup in `server.js` from line 220 - 232 and uncomment the middleware localhost session like so:  
+   >Make sure to comment out the code for Middleware Render Production Setup in `server.js` from line 220 - 232 and uncomment the middleware localhost session like so:  
 
 ```
 // localhost
