@@ -266,9 +266,53 @@ Database Restore
      npm install passport passport-local passport-google-oauth20 express express-session connect-mongo mongoose bcryptjs dotenv
      ```
 4. Environment Variables Configuration
-Make sure production of GOOGLE_CALLBACK_URL in the .env was commented out
-5. Before you start with localhost  
-     Please comment the code of Middleware Setup in server.js from line 218 - 228  
-     Uncomment the code of Middleware Setup in server.js from line 203 - 216
-6. Run "npm start"  
+Make sure production of GOOGLE_CALLBACK_URL in the COMP3810SEF-Group11-main/.env was commented like so
+     ```
+#GOOGLE_CALLBACK_URL=https://comp3810sef-group11.onrender.com/auth/google/callback
+     ```
+Make sure GoogleStrategy in the COMP3810SEF-Group11-main/server.js was set as
+proxy: false like so
+     ```
+……
+  clientID: process.env.GOOGLE_CLIENT_ID,
+  clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+  callbackURL: process.env.GOOGLE_CALLBACK_URL,
+  // true for production Render
+  // proxy: true
+  //  false for localhost testing
+  proxy: false
+ …… 
+     ```
+
+     Make sure comment the code of Middleware Render Production Setup in server.js from line 220 - 232 and uncomment  middleware localhost session like so
+     ```
+// localhost
+app.use(session({
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    maxAge: 24 * 60 * 60 * 1000, // 24 hours
+    httpOnly: true,
+    secure: false,
+    sameSite: 'lax'
+  }
+}));
+
+/*Render Production
+app.use(session({
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    maxAge: 24 * 60 * 60 * 1000, // 24 hours
+    httpOnly: true,
+    secure: true,
+    sameSite: 'none'
+  }
+}));
+*/
+
+     ```
+5. Run "npm start"  
      The application will start at http://localhost:8099
