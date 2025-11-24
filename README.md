@@ -263,7 +263,7 @@ Database Restore
 2. cd COMP3810SEF-Group11
 
 3. Install Dependencies
-   >Do not just "npm install"
+   >Do not just "npm install", please run the following command:  
      ```
      npm install passport passport-local passport-google-oauth20 express express-session connect-mongo mongoose bcryptjs dotenv
      ```
