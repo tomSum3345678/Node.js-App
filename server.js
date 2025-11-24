@@ -52,7 +52,10 @@ passport.use(new GoogleStrategy({
   clientID: process.env.GOOGLE_CLIENT_ID,
   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
   callbackURL: process.env.GOOGLE_CALLBACK_URL,
-  proxy: true
+  // true for production Render
+  // proxy: true 
+  //  false for localhost testing
+  proxy: false 
 },
   async (accessToken, refreshToken, profile, done) => {
     try {
@@ -201,7 +204,7 @@ passport.deserializeUser(async function (id, done) {
 // ===== Middleware Setup =====
 app.set('trust proxy', 1);
 // 1. Session configuration
-/*localhost
+// localhost 
 app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
@@ -209,12 +212,12 @@ app.use(session({
   cookie: {
     maxAge: 24 * 60 * 60 * 1000, // 24 hours
     httpOnly: true,
-    secure: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
+    secure: false, 
+    sameSite: 'lax' 
   }
-}));*/
-//Render Production
+}));
+
+/*Render Production
 app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
@@ -226,7 +229,7 @@ app.use(session({
     sameSite: 'none'
   }
 }));
-
+*/
 
 
 // 2. Initialize passport and session for persistent login sessions
@@ -1309,6 +1312,7 @@ process.on('SIGINT', async () => {
   console.log(' Database connections closed');
   process.exit(0);
 });
+
 
 
 
